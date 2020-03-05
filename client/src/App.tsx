@@ -8,7 +8,9 @@ import {LogIn} from './components/LogIn'
 import {NotFound} from './components/NotFound'
 import {Todos} from './components/Todos'
 import {DesktopContainer} from "./components/other/DesktopContainer";
-import {HomepageHeading} from "./components/other/HomePageHeading";
+import {MobileContainer} from "./components/other/MobileContainer";
+import {YoutubeCardItemList} from "./components/other/YoutubeCardItemList";
+import {EditYoutubeCardItem} from "./components/other/EditYoutubeCardItem";
 
 export interface AppProps {
 }
@@ -33,59 +35,45 @@ export default class App extends Component<AppProps, AppState> {
     this.props.auth.login()
   }
 
-  handleLogout():any {
+  handleLogout(): any {
     this.props.auth.logout()
   }
 
+  ResponsiveContainer = (props: any): any => (
+    <>
+      <DesktopContainer fixed={true}
+                        handleLogin={this.handleLogin}
+                        handleLogout={this.handleLogout}
+                        isAuthenticated={this.props.auth.isAuthenticated()}>{props.children}</DesktopContainer>
+      <MobileContainer>{props.children}</MobileContainer>
+    </>
+  )
+
+
   render() {
     return (
-      <Segment style={{padding: '8em 0em'}} vertical>
-        <DesktopContainer fixed={true}
-                          handleLogin={this.handleLogin}
-                          handleLogout={this.handleLogout}
-                          isAuthenticated={this.props.auth.isAuthenticated()}/>
-        <HomepageHeading/>
-        <Grid container stackable verticalAlign="middle">
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Router history={this.props.history}>
-                {this.generateMenu()}
-                {this.generateCurrentPage()}
-              </Router>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+      <Segment vertical>
+        <Router history={this.props.history}>
+          <this.ResponsiveContainer>
+            <Grid centered={true}>
+              <Grid.Row>
+                <Grid.Column width={14}>
+                  {this.props.auth.isAuthenticated() ? <EditYoutubeCardItem value={"HELLO"}/> : ""}
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <YoutubeCardItemList/>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </this.ResponsiveContainer>
+        </Router>
       </Segment>
     )
   }
 
-  generateMenu() {
-    return (
-      <Menu>
-        <Menu.Item name="home">
-          <Link to="/">Home</Link>
-        </Menu.Item>
 
-        <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
-      </Menu>
-    )
-  }
-
-  logInLogOutButton() {
-    if (this.props.auth.isAuthenticated()) {
-      return (
-        <Menu.Item name="logout" onClick={this.handleLogout}>
-          Log Out
-        </Menu.Item>
-      )
-    } else {
-      return (
-        <Menu.Item name="login" onClick={this.handleLogin}>
-          Log In
-        </Menu.Item>
-      )
-    }
-  }
 
   generateCurrentPage() {
     if (!this.props.auth.isAuthenticated()) {

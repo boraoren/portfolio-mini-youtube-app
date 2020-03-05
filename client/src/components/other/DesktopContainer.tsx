@@ -1,11 +1,11 @@
-import React, {PureComponent, SyntheticEvent} from "react";
+import React, {PureComponent} from "react";
 import {Button, Container, Menu, Responsive, Segment, Visibility} from "semantic-ui-react";
 import {HomepageHeading} from "./HomePageHeading";
 import {ButtonProps} from "semantic-ui-react/dist/commonjs/elements/Button/Button";
-import Auth from "../../auth/Auth";
+import {Link} from "react-router-dom";
 
 interface DesktopContainerState {
-  fixed?: boolean,
+  fixed?: boolean
   handleLogin: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {}
   handleLogout: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => {}
   isAuthenticated: boolean
@@ -42,11 +42,8 @@ export class DesktopContainer extends PureComponent<DesktopContainerState> {
             >
               <Container>
                 <Menu.Item as='a' active>
-                  Home
+                  <Link to="/">Home</Link>
                 </Menu.Item>
-                <Menu.Item as='a'>Work</Menu.Item>
-                <Menu.Item as='a'>Company</Menu.Item>
-                <Menu.Item as='a'>Careers</Menu.Item>
                 <Menu.Item position='right'>
                   {logInLogOutButton(this.props)}
                 </Menu.Item>
@@ -54,9 +51,10 @@ export class DesktopContainer extends PureComponent<DesktopContainerState> {
             </Menu>
             <HomepageHeading/>
           </Segment>
+          <Segment>
+            {children}
+          </Segment>
         </Visibility>
-
-        {children}
       </Responsive>
     )
   }
