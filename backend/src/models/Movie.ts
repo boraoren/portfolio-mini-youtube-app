@@ -4,6 +4,7 @@ export interface Movie {
     createdAt: string
     name: string
     directorName: string
+    summary: string
     type: boolean
     url?: string
     isWatched: boolean
