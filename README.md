@@ -67,4 +67,11 @@ sls deploy -v
 ```
 
 ## DynamoDB
-Table name is `TodoTable`
+Table name is `Movie`
+
+|   ATTRIBUTE NAME  |   NOTES   |
+|   ---             |   ---     |
+|   name            |           |
+|   director name   |           |
+|   type            |  action / thriller / war <br> sci fi / romance / crime <br> musicals / comedy / horror <br> documentary / western / fantasy     |
+|   summary         |           |
