@@ -106,3 +106,28 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}/index/${self:provider.environment.INDEX_USER_ID}
+
+  GetMovies:
+    handler: src/lambda/api/getMovies.handler
+    tracing: PassThrough
+    events:
+      - http:
+          method: get
+          path: movies
+          cors: true
+    iamRoleStatementsName: portfolio-mini-youtube-app-${self:provider.stage}-getMovies
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}/index/${self:provider.environment.INDEX_USER_ID}
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}
+
+

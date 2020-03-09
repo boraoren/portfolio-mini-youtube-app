@@ -1,6 +1,6 @@
 export interface MovieUpdate {
     name: string
     directorName: string
-    type: boolean
+    type: string
     isWatched: boolean
 }

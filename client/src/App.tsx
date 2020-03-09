@@ -59,9 +59,6 @@ export default class App extends Component<AppProps, AppState> {
 
 
   generateCurrentPage() {
-    if (!this.props.auth.isAuthenticated()) {
-    }
-
     return (
       <Switch>
         <Route
@@ -77,7 +74,7 @@ export default class App extends Component<AppProps, AppState> {
                 </Grid.Row>
                 <Grid.Row>
                   <Grid.Column width={16}>
-                    <YoutubeCardItemList/>
+                    <YoutubeCardItemList auth={this.props.auth}/>
                   </Grid.Column>
                 </Grid.Row>
               </Grid>

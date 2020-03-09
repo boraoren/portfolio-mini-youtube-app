@@ -1,5 +1,6 @@
 import auth0 from 'auth0-js';
 import { authConfig } from '../config';
+import { decode } from 'jsonwebtoken'
 
 export default class Auth {
   accessToken;
@@ -51,6 +52,12 @@ export default class Auth {
   getIdToken() {
     return this.idToken;
   }
+
+  getUserId() {
+    const decodedJwt = decode(this.getIdToken())
+    return decodedJwt!==null ? decodedJwt.sub : ""
+  }
+
 
   setSession(authResult) {
     // Set isLoggedIn flag in localStorage

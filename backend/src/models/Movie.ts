@@ -5,7 +5,7 @@ export interface Movie {
     name: string
     directorName: string
     summary: string
-    type: boolean
+    type: string
     url?: string
     isWatched: boolean
 }
