@@ -5,13 +5,15 @@ import Auth from "../../auth/Auth";
 import {Movie} from "../../types/Movie";
 
 const options = [
-  {key: 'a', text: 'Action', value: 'action'},
-  {key: 'co', text: 'Comedy', value: 'comedy'},
-  {key: 'f', text: 'Fantasy', value: 'fantasy'},
-  {key: 'h', text: 'Horror', value: 'horror'},
-  {key: 'r', text: 'Romance', value: 'romance'},
-  {key: 't', text: 'Thriller', value: 'thriller'},
+  {key: 'a', text: 'action', value: 'action'},
+  {key: 'co', text: 'comedy', value: 'comedy'},
+  {key: 'f', text: 'fantasy', value: 'fantasy'},
+  {key: 'h', text: 'horror', value: 'horror'},
+  {key: 'r', text: 'romance', value: 'romance'},
+  {key: 't', text: 'thriller', value: 'thriller'},
+  {key: 's', text: 'sci-fi', value: 'sci-fi'}
 ]
+
 
 interface EditYoutubeCardItemProps {
   auth: Auth
@@ -47,6 +49,7 @@ export class EditYoutubeCardItem extends PureComponent<EditYoutubeCardItemProps,
   })
 
   handleChange = (e: any, {name, value}: { name: any, value: any }) => this.setState(this.updateState(name, value))
+
 
   handleSubmit = async () => {
 
@@ -113,27 +116,8 @@ export class EditYoutubeCardItem extends PureComponent<EditYoutubeCardItemProps,
             <Form.Field control={Button}>Submit</Form.Field>
           </Form>
         </Card.Content>
-        <Card.Content>
-          {JSON.stringify({name, directorName, type, summary})}
-        </Card.Content>
       </Card>
     )
-  }
-
-  onMovieCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
-    try {
-      const newMovie = await createMovie(this.props.auth.getIdToken(), {
-        name: this.state.name,
-        type: this.state.type,
-        directorName: this.state.directorName,
-        summary: this.state.summary
-      })
-      this.setState({
-        movies: [...this.state.movies, newMovie],
-      })
-    } catch {
-      alert('Todo creation failed')
-    }
   }
 
 }

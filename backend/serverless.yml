@@ -18,6 +18,9 @@ custom:
       - name: CreateMovieRequest
         contentType: application/json
         schema: ${file(src/lambda/requests/create-movie-request.json)}
+      - name: UpdateMovieRequest
+        contentType: application/json
+        schema: ${file(src/lambda/requests/update-movie-request.json)}
 
   webpack:
     webpackConfig: ./webpack.config.js
@@ -130,4 +133,27 @@ functions:
           - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}
 
-
+  UpdateMovie:
+    handler: src/lambda/api/updateMovie.handler
+    tracing: PassThrough
+    events:
+      - http:
+          method: patch
+          path: movies/{movieId}
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update a movie
+            description: Update a movie
+            requestModels:
+              'application/json': UpdateMovieRequest
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}/index/${self:provider.environment.INDEX_USER_ID}

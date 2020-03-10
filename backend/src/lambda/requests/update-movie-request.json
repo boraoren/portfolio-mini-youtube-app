@@ -3,20 +3,24 @@
   "title": "group",
   "type": "object",
   "properties": {
-    "task": {
+    "name": {
       "type": "string"
     },
-    "dueDate": {
+    "directorName": {
       "type": "string"
     },
-    "done": {
-      "type": "boolean"
+    "summary": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
     }
   },
   "required": [
-    "task",
-    "dueDate",
-    "done"
+    "name",
+    "directorName",
+    "summary",
+    "type"
   ],
   "additionalProperties": false
 }
