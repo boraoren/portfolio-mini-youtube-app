@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react'
 import {Button, Card, Form, Input, Select, TextArea,} from 'semantic-ui-react'
 import {createMovie} from "../../api/movies-api";
 import Auth from "../../auth/Auth";
-import {Movie} from "../../types/Movie";
 
 const options = [
   {key: 'a', text: 'action', value: 'action'},
@@ -18,10 +17,10 @@ const options = [
 interface EditYoutubeCardItemProps {
   auth: Auth
   history: History
+  handleUpdateMovieList: Function
 }
 
 interface EditYoutubeCardItemState {
-  movies: Movie[]
   name: string,
   directorName: string,
   type: string,
@@ -37,7 +36,6 @@ export class EditYoutubeCardItem extends PureComponent<EditYoutubeCardItemProps,
     directorName: '',
     type: '',
     summary: '',
-    movies: [],
     loadingMovies: false
   }
 
@@ -60,14 +58,17 @@ export class EditYoutubeCardItem extends PureComponent<EditYoutubeCardItemProps,
           summary: this.state.summary,
           type: this.state.type,
         })
+
         this.setState({
-          movies: [...this.state.movies, newMovie],
           name: '',
           directorName: '',
           summary:'',
           type:'',
           loadingMovies: false
         })
+
+        this.props.handleUpdateMovieList(newMovie)
+
       } catch {
         alert('Movie creation failed')
       }

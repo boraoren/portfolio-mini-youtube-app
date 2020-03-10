@@ -1,16 +1,15 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import {Route, Router, Switch} from 'react-router-dom'
-import {Grid, Segment} from 'semantic-ui-react'
+import {Grid, Loader, Segment} from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
 import {NotFound} from './components/NotFound'
 import {DesktopContainer} from "./components/other/DesktopContainer";
 import {MobileContainer} from "./components/other/MobileContainer";
 import {YoutubeCardItemList} from "./components/other/YoutubeCardItemList";
-import {EditYoutubeCardItem} from "./components/other/EditYoutubeCardItem";
-
-export interface AppProps {
-}
+import {getMovies} from "./api/movies-api";
+import {Movie} from "./types/Movie";
+import {ButtonProps} from "semantic-ui-react/dist/commonjs/elements/Button/Button";
 
 export interface AppProps {
   auth: Auth
@@ -18,21 +17,22 @@ export interface AppProps {
 }
 
 export interface AppState {
+  movies: Movie[]
+  loadingMovies: boolean
 }
 
-export default class App extends Component<AppProps, AppState> {
-  constructor(props: AppProps) {
-    super(props)
+export default class App extends PureComponent<AppProps, AppState> {
 
-    this.handleLogin = this.handleLogin.bind(this)
-    this.handleLogout = this.handleLogout.bind(this)
+  state: AppState = {
+    movies: [],
+    loadingMovies: false
   }
 
-  handleLogin(): any {
+  handleLogin =(event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps):any=>  {
     this.props.auth.login()
   }
 
-  handleLogout(): any {
+  handleLogout = (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps):any => {
     this.props.auth.logout()
   }
 
@@ -46,6 +46,17 @@ export default class App extends Component<AppProps, AppState> {
     </>
   )
 
+  async componentDidMount() {
+    try {
+      const movies = await getMovies(this.props.auth.getIdToken())
+      this.setState({
+        movies,
+        loadingMovies: false
+      })
+    } catch (e) {
+      alert(`Failed to fetch movies: ${e.message}`)
+    }
+  }
 
   render() {
     return (
@@ -57,7 +68,6 @@ export default class App extends Component<AppProps, AppState> {
     )
   }
 
-
   generateCurrentPage() {
     return (
       <Switch>
@@ -68,13 +78,8 @@ export default class App extends Component<AppProps, AppState> {
             return <this.ResponsiveContainer>
               <Grid centered={true}>
                 <Grid.Row>
-                  <Grid.Column width={14}>
-                    {this.props.auth.isAuthenticated() ? <EditYoutubeCardItem auth={this.props.auth} history={this.props.history}/> : ""}
-                  </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
                   <Grid.Column width={16}>
-                    <YoutubeCardItemList auth={this.props.auth}/>
+                    {this.renderMovies()}
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
@@ -86,4 +91,32 @@ export default class App extends Component<AppProps, AppState> {
       </Switch>
     )
   }
+
+  renderMovies() {
+    if (this.state.loadingMovies) {
+      return this.renderLoading()
+    }
+
+    return this.renderMovieList()
+  }
+
+  renderMovieList() {
+    return (
+      <YoutubeCardItemList auth={this.props.auth}
+                           movies={this.state.movies}
+                           history={this.props.history}/>
+    )
+  }
+
+
+  renderLoading() {
+    return (
+      <Grid.Row>
+        <Loader indeterminate active inline="centered">
+          Loading Movies
+        </Loader>
+      </Grid.Row>
+    )
+  }
+
 }
