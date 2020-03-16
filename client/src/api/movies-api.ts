@@ -65,3 +65,15 @@ export async function getUploadUrl(
 export async function uploadFile(uploadUrl: string, file: Buffer): Promise<void> {
   await Axios.put(uploadUrl, file)
 }
+
+export async function deleteMovie(
+  idToken: string,
+  movieId: string
+): Promise<void> {
+  await Axios.delete(`${apiEndpoint}/movies/${movieId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    }
+  })
+}

@@ -3,7 +3,7 @@ import {Button, Card, Form, Input, Modal, Select, TextArea} from 'semantic-ui-re
 import {YoutubeVideo} from "./YoutubeVideo";
 import {Movie} from "../../types/Movie";
 import Auth from "../../auth/Auth";
-import {updateMovie} from "../../api/movies-api";
+import {deleteMovie, updateMovie} from "../../api/movies-api";
 import {UploadMovie} from "./UploadMovie";
 
 interface YoutubeCardItemState {
@@ -20,6 +20,7 @@ interface YoutubeCardItemProps {
   movie: Movie
   isFluid: boolean
   auth: Auth
+  updateMovieListByDeletedMovie: Function
 }
 
 
@@ -52,6 +53,17 @@ export class YoutubeCardItem extends PureComponent<YoutubeCardItemProps, Youtube
 
 
   handleChange = (e: any, {name, value}: { name: any, value: any }) => this.setState(this.updateState(name, value))
+
+  handleDelete = async () => {
+    try {
+      const movieId = this.props.movie.id
+      await deleteMovie(this.props.auth.getIdToken(), movieId)
+      this.props.updateMovieListByDeletedMovie(movieId)
+    } catch {
+      alert('Todo deletion failed')
+    }
+  }
+
 
   handleSubmit = async () => {
 
@@ -106,6 +118,7 @@ export class YoutubeCardItem extends PureComponent<YoutubeCardItemProps, Youtube
           close,
           show,
           movie,
+          this.handleDelete,
           this.handleChange,
           this.handleSubmit,
           auth) : ""}
@@ -126,6 +139,7 @@ const getAuthenticatedContainer = (open: any,
                                    close: any,
                                    show: any,
                                    movie: Movie,
+                                   handleDelete: any,
                                    handleChange: any,
                                    handleSubmit: any,
                                    auth: Auth) => {
@@ -142,7 +156,7 @@ const getAuthenticatedContainer = (open: any,
           <Button basic color='green' onClick={show()}>
             Edit
           </Button>
-          <Button basic color='red'>
+          <Button basic color='red' onClick={() => handleDelete()}>
             Delete
           </Button>
         </div>

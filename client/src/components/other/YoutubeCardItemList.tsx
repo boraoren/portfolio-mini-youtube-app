@@ -25,6 +25,13 @@ export class YoutubeCardItemList extends PureComponent<YoutubeCardItemListProps,
         this.setState({ movies:nextProps.movies })
     }
 
+    updateMovieListByDeletedMovie = (movieId: string) => {
+        this.setState({
+            movies: this.state.movies.filter(movie => movie.id != movieId)
+        })
+
+    }
+
     handleUpdateMovieList = (newMovie: Movie) => {
         this.setState({
             movies: [...this.props.movies, newMovie]
@@ -46,7 +53,8 @@ export class YoutubeCardItemList extends PureComponent<YoutubeCardItemListProps,
                         return (
                             <YoutubeCardItem isFluid={false}
                                              movie={movie}
-                                             auth={this.props.auth}/>
+                                             auth={this.props.auth}
+                                            updateMovieListByDeletedMovie={this.updateMovieListByDeletedMovie}/>
                         )
                     })}
                 </Card.Group>

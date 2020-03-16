@@ -218,3 +218,22 @@ functions:
           - s3:GetObject
           - s3:PutObject
         Resource: arn:aws:s3:::${self:provider.environment.MOVIES_S3_BUCKET}/*
+
+  DeleteMovie:
+    handler: src/lambda/api/deleteMovie.handler
+    tracing: PassThrough
+    events:
+      - http:
+          method: delete
+          path: movies/{movieId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MOVIE_TABLE}/index/${self:provider.environment.INDEX_USER_ID}
