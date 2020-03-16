@@ -4,6 +4,7 @@ import {YoutubeVideo} from "./YoutubeVideo";
 import {Movie} from "../../types/Movie";
 import Auth from "../../auth/Auth";
 import {updateMovie} from "../../api/movies-api";
+import {UploadMovie} from "./UploadMovie";
 
 interface YoutubeCardItemState {
   open: boolean
@@ -84,9 +85,11 @@ export class YoutubeCardItem extends PureComponent<YoutubeCardItemProps, Youtube
     })
     const close = () => this.setState({open: false})
 
+    console.log("MOVIE URL: " + movie.url)
+
     return (
       <Card fluid={isFluid}>
-        <YoutubeVideo/>
+        {getVideoPlayer(movie.url)}
         <Card.Content>
           <Card.Header>{this.state.name}</Card.Header>
           <Card.Meta>
@@ -99,10 +102,23 @@ export class YoutubeCardItem extends PureComponent<YoutubeCardItemProps, Youtube
         <Card.Content>
           {this.state.type}
         </Card.Content>
-        {auth.getUserId() === movie.userId ? getAuthenticatedContainer(open, close, show, movie, this.handleChange, this.handleSubmit) : ""}
+        {auth.getUserId() === movie.userId ? getAuthenticatedContainer(open,
+          close,
+          show,
+          movie,
+          this.handleChange,
+          this.handleSubmit,
+          auth) : ""}
       </Card>
     )
   }
+}
+
+const getVideoPlayer = (url: string | undefined): any => {
+  return (
+    url === undefined ? <Card.Content><Card.Header>No Trailer Video Content</Card.Header></Card.Content> : <YoutubeVideo
+      url={"https://portfolio-todo-movies-dev.s3.amazonaws.com/491a1959-7d81-4ad6-81a7-3acc3d716f94.mp4"}/>
+  )
 }
 
 
@@ -111,67 +127,76 @@ const getAuthenticatedContainer = (open: any,
                                    show: any,
                                    movie: Movie,
                                    handleChange: any,
-                                   handleSubmit: any) => {
+                                   handleSubmit: any,
+                                   auth: Auth) => {
   return (
-    <Card.Content extra>
-      <div className='ui two buttons'>
-        <Button basic color='green' onClick={show()}>
-          Edit
-        </Button>
-        <Button basic color='red'>
-          Delete
-        </Button>
-      </div>
-      <Modal dimmer={true} open={open} onClose={close}>
-        <Modal.Header>Update Movie Item</Modal.Header>
-        <Modal.Content>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group widths='equal'>
+    <Card>
+      <Card.Content extra>
+        <div className='ui two buttons'>
+          <UploadMovie auth={auth} movieId={movie.id}/>
+        </div>
+      </Card.Content>
+      <Card.Content extra>
+        <h3>Edit Movie Item</h3>
+        <div className='ui two buttons'>
+          <Button basic color='green' onClick={show()}>
+            Edit
+          </Button>
+          <Button basic color='red'>
+            Delete
+          </Button>
+        </div>
+        <Modal dimmer={true} open={open} onClose={close}>
+          <Modal.Header>Update Movie Item</Modal.Header>
+          <Modal.Content>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group widths='equal'>
+                <Form.Field
+                  name={'name'}
+                  control={Input}
+                  label='Movie Name'
+                  placeholder='Movie Name'
+                  onChange={handleChange}
+                  defaultValue={movie.name}
+                />
+                <Form.Field
+                  name={'directorName'}
+                  control={Input}
+                  label='Director Name'
+                  placeholder='Director Name'
+                  onChange={handleChange}
+                  defaultValue={movie.directorName}
+                />
+                <Form.Field
+                  name={'type'}
+                  control={Select}
+                  label='Movie Type'
+                  options={options}
+                  placeholder='Movie Type'
+                  onChange={handleChange}
+                  defaultValue={movie.type.toLowerCase()}
+                />
+              </Form.Group>
               <Form.Field
-                name={'name'}
-                control={Input}
-                label='Movie Name'
-                placeholder='Movie Name'
+                name={'summary'}
+                control={TextArea}
+                label='Summary'
+                placeholder='Tell us more about movie'
                 onChange={handleChange}
-                defaultValue={movie.name}
+                defaultValue={movie.summary}
               />
-              <Form.Field
-                name={'directorName'}
-                control={Input}
-                label='Director Name'
-                placeholder='Director Name'
-                onChange={handleChange}
-                defaultValue={movie.directorName}
-              />
-              <Form.Field
-                name={'type'}
-                control={Select}
-                label='Movie Type'
-                options={options}
-                placeholder='Movie Type'
-                onChange={handleChange}
-                defaultValue={movie.type.toLowerCase()}
-              />
-            </Form.Group>
-            <Form.Field
-              name={'summary'}
-              control={TextArea}
-              label='Summary'
-              placeholder='Tell us more about movie'
-              onChange={handleChange}
-              defaultValue={movie.summary}
-            />
-            <Form.Field control={Button}
-                        positive
-                        icon='checkmark'
-                        labelPosition='right'
-                        content="Yep, that's me">Submit</Form.Field>
-            <Button color='black' onClick={close}>
-              Cancel
-            </Button>
-          </Form>
-        </Modal.Content>
-      </Modal>
-    </Card.Content>
+              <Form.Field control={Button}
+                          positive
+                          icon='checkmark'
+                          labelPosition='right'
+                          content="Yep, that's me">Submit</Form.Field>
+              <Button color='black' onClick={close}>
+                Cancel
+              </Button>
+            </Form>
+          </Modal.Content>
+        </Modal>
+      </Card.Content>
+    </Card>
   )
 }

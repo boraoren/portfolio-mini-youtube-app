@@ -1,10 +1,7 @@
 import React from 'react'
-import { Embed } from 'semantic-ui-react'
 
-export const YoutubeVideo = () => (
-  <Embed
-    id='O6Xo21L0ybE'
-    aspectRatio='4:3'
-    source='youtube'
-  />
+export const YoutubeVideo = (props:any) => (
+  <video controls={true}>
+    <source src={props.url} type="video/mp4"/>
+  </video>
 )
