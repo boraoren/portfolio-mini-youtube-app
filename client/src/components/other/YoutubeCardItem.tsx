@@ -60,7 +60,7 @@ export class YoutubeCardItem extends PureComponent<YoutubeCardItemProps, Youtube
       await deleteMovie(this.props.auth.getIdToken(), movieId)
       this.props.updateMovieListByDeletedMovie(movieId)
     } catch {
-      alert('Todo deletion failed')
+      alert('Movie deletion failed')
     }
   }
 

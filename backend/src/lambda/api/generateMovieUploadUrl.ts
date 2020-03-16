@@ -47,7 +47,7 @@ export async function generateMovieUploadService(movieId: string,
 export async function updateMovieURLRepository(movieId: string,
     activeUser: string
 ): Promise<any> {
-    logger.info(`Updating attachmentUrl for todo item: ${movieId}`)
+    logger.info(`Updating attachmentUrl for movie item: ${movieId}`)
 
     const movieUrl = `https://${bucketName}.s3.amazonaws.com/${movieId}.mp4`
 
