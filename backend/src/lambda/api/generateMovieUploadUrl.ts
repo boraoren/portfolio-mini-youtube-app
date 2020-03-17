@@ -1,9 +1,9 @@
 import 'source-map-support/register'
 import * as AWS from 'aws-sdk'
 import {APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult} from 'aws-lambda'
-import {getToken, parseUserId} from '../../auth/utils'
-import {DocumentClient} from "aws-sdk/clients/dynamodb";
+import {getToken} from '../../auth/utils'
 import {createLogger} from "../../utils/logger";
+import {generateMovieUploadService} from "../../services/movieServices";
 
 const s3 = new AWS.S3({ signatureVersion: 'v4' })
 
@@ -35,42 +35,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
 }
 
-//SERVICE
-export async function generateMovieUploadService(movieId: string,
-                                     jwtToken: string
-): Promise<string> {
-    const activeUser = parseUserId(jwtToken)
-    return await updateMovieURLRepository(movieId, activeUser)
-}
 
-//RESOURCE
-export async function updateMovieURLRepository(movieId: string,
-    activeUser: string
-): Promise<any> {
-    logger.info(`Updating attachmentUrl for movie item: ${movieId}`)
-
-    const movieUrl = `https://${bucketName}.s3.amazonaws.com/${movieId}.mp4`
-
-    const params = {
-        TableName: process.env.MOVIE_TABLE,
-        Key: {
-            id:movieId
-        },
-        UpdateExpression: 'set #url = :u',
-        ConditionExpression: 'userId = :userId',
-        ExpressionAttributeNames: {
-            "#url": "url",
-        },
-        ExpressionAttributeValues: {
-            ':u':movieUrl,
-            ':userId':activeUser
-        },
-        ReturnValues: "UPDATED_NEW"
-    }
-
-    const documentClient: DocumentClient = new AWS.DynamoDB.DocumentClient()
-    return await documentClient.update(params).promise()
-}
 
 //UTIL
 function getUploadUrl(movieId: string) {
