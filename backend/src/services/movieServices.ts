@@ -2,14 +2,10 @@ import {CreateMovieRequest} from "../lambda/requests/CreateMovieRequest";
 import {Movie} from "../models/Movie";
 import {parseUserId} from "../auth/utils";
 import * as uuid from 'uuid'
-import {
-    createMovieResource,
-    deleteMovieResource,
-    getAllMovieForAllResource,
-    updateMovieResource,
-    updateMovieURLRepository
-} from "../resources/movieResources";
+import {MovieResources} from "../resources/movieResources";
 import {UpdateMovieRequest} from "../lambda/requests/UpdateMovieRequest";
+
+const movieResources = new MovieResources()
 
 export async function createMovieService(
     createMovieRequest: CreateMovieRequest,
@@ -19,7 +15,7 @@ export async function createMovieService(
     const id = uuid.v4()
     const userId = parseUserId(jwtToken)
 
-    return await createMovieResource({
+    return await movieResources.createMovieResource({
         userId: userId,
         id: id,
         createdAt: new Date().toISOString(),
@@ -36,18 +32,18 @@ export async function createMovieService(
 export async function deleteMovieService(movieId: string, jwtToken: string
 ): Promise<any> {
     const activeUser = parseUserId(jwtToken)
-    return await deleteMovieResource(movieId, activeUser)
+    return await movieResources.deleteMovieResource(movieId, activeUser)
 }
 
 export async function generateMovieUploadService(movieId: string,
                                                  jwtToken: string
 ): Promise<string> {
     const activeUser = parseUserId(jwtToken)
-    return await updateMovieURLRepository(movieId, activeUser)
+    return await movieResources.updateMovieURLRepository(movieId, activeUser)
 }
 
 export async function getAllMovieForAllService(): Promise<Movie[]> {
-    return await getAllMovieForAllResource()
+    return await movieResources.getAllMovieForAllResource()
 }
 
 
@@ -56,5 +52,5 @@ export async function updateMovieService(movieId: string,
                                          jwtToken: string
 ): Promise<any> {
     const activeUser = parseUserId(jwtToken)
-    return await updateMovieResource(movieId, updatedMovie, activeUser)
+    return await movieResources.updateMovieResource(movieId, updatedMovie, activeUser)
 }
